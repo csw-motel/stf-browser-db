@@ -286,7 +286,8 @@
     "name": "Yahoo! JAPAN",
     "platforms": {
       "android": {
-        "package": "jp.co.yahoo.android.yjtop"
+        "package": "jp.co.yahoo.android.yjtop",
+	"system": true
       }
     }
   }
