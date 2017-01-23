@@ -14,6 +14,45 @@ $(apps): app-% : \
 	dist/icon/16x16/%.png \
 	dist/icon/36x36/%.png
 
+build/platforms/ios:
+	mkdir -p $@
+
+build/platforms/ios/%.json: | build/platforms/ios
+	if [ -s 'static/ios/$*.json' ]; then \
+		cp 'static/ios/$*.json' $@ \
+		; \
+	else \
+		jq -r '.["$*"].platforms.ios.package' $(inventory_json) | \
+		xargs -I {} curl -sS -4 "https://play.google.com/store/apps/details?id={}&hl=en" | \
+		grep -Eo 'class="cover-image" src="([^"]+)"' | cut -c25- | awk '{print "{\"icon\":"$$0"}"}' | jq -S . > $@ \
+		; \
+	fi
+
+build/platforms/ios/%.png: build/platforms/ios/%.json | build/platforms/ios
+	if [ -s 'static/ios/$*.png' ]; then \
+		cp 'static/ios/$*.png' $@ \
+		; \
+	else \
+		jq -r '.icon' $< | xargs -I {} curl -sS -4 -o $@ {} \
+		; \
+	fi
+
+dist/icon/16x16:
+	mkdir -p $@
+
+dist/icon/16x16/%.png: build/platforms/ios/%.png | dist/icon/16x16
+	gm convert $< -resize 16x16 $@
+	pngcrush -q -brute $@ $@.crushed && mv $@.crushed $@
+
+dist/icon/36x36:
+	mkdir -p $@
+
+dist/icon/36x36/%.png: build/platforms/ios/%.png | dist/icon/36x36
+	gm convert $< -resize 36x36 $@
+	pngcrush -q -brute $@ $@.crushed && mv $@.crushed $@
+
+
+
 build/platforms/android:
 	mkdir -p $@
 
