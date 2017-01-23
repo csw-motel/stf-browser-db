@@ -286,8 +286,16 @@
     "name": "Yahoo! JAPAN",
     "platforms": {
       "android": {
-        "package": "jp.co.yahoo.android.yjtop",
-	"system": true
+        "package": "jp.co.yahoo.android.yjtop"
+      }
+    }
+  },
+  "safari": {
+    "developer": "Safari Apple Inc.",
+    "name": "Safari",
+    "platforms": {
+      "ios": {
+        "package": "com.apple.safari"
       }
     }
   }
